@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.1.0",
   "engineVersion": "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba",
   "activeProvider": "postgresql",
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel User {\n  id    Int     @id @default(autoincrement())\n  email String  @unique\n  name  String?\n}\n",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\n//\n// ---------------------------\n// DATABASE & GENERATORS\n// ---------------------------\n// ---------------------------\n// ENUMS\n// ---------------------------\nenum Role {\n  USER\n  HOST\n  ADMIN\n}\n\nenum EventStatus {\n  OPEN\n  FULL\n  CANCELLED\n  COMPLETED\n}\n\nenum PaymentStatus {\n  PENDING\n  SUCCESS\n  FAILED\n  REFUNDED\n}\n\n// ---------------------------\n// MODELS\n// ---------------------------\n\n// USERS\nmodel User {\n  id       String  @id @default(uuid())\n  name     String\n  email    String  @unique\n  password String\n  bio      String?\n  image    String?\n  location String?\n  role     Role    @default(USER)\n\n  interests    UserInterest[]\n  hostedEvents Event[]        @relation(\"HostedEvents\")\n  joinedEvents Participant[]\n  reviews      Review[]       @relation(\"UserReviews\")\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  payments Payment[]\n}\n\n// INTEREST TAGS\nmodel Interest {\n  id    String         @id @default(uuid())\n  name  String         @unique\n  users UserInterest[]\n}\n\n// USER–INTEREST PIVOT TABLE\nmodel UserInterest {\n  id String @id @default(uuid())\n\n  user   User   @relation(fields: [userId], references: [id])\n  userId String\n\n  interest   Interest @relation(fields: [interestId], references: [id])\n  interestId String\n}\n\n// EVENTS\nmodel Event {\n  id              String      @id @default(uuid())\n  name            String\n  type            String\n  description     String\n  date            DateTime\n  location        String\n  minParticipants Int\n  maxParticipants Int\n  image           String?\n  joiningFee      Float       @default(0)\n  status          EventStatus @default(OPEN)\n\n  host   User   @relation(\"HostedEvents\", fields: [hostId], references: [id])\n  hostId String\n\n  participants Participant[]\n  reviews      Review[]\n  payments     Payment[]\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n\n// PARTICIPANTS (USER JOIN EVENT)\nmodel Participant {\n  id String @id @default(uuid())\n\n  user   User   @relation(fields: [userId], references: [id])\n  userId String\n\n  event   Event  @relation(fields: [eventId], references: [id])\n  eventId String\n\n  createdAt DateTime @default(now())\n\n  @@unique([userId, eventId]) // Prevent joining twice\n}\n\n// REVIEWS\nmodel Review {\n  id      String  @id @default(uuid())\n  rating  Int // 1–5 stars\n  comment String?\n\n  reviewer   User   @relation(\"UserReviews\", fields: [reviewerId], references: [id])\n  reviewerId String\n\n  event   Event  @relation(fields: [eventId], references: [id])\n  eventId String\n\n  createdAt DateTime @default(now())\n}\n\n// PAYMENTS (SSLCommerz / Stripe Compatible)\nmodel Payment {\n  id String @id @default(uuid())\n\n  user   User   @relation(fields: [userId], references: [id])\n  userId String\n\n  event   Event  @relation(fields: [eventId], references: [id])\n  eventId String\n\n  amount        Float\n  transactionId String?\n  status        PaymentStatus @default(PENDING)\n\n  createdAt DateTime @default(now())\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -28,7 +28,7 @@ const config: runtime.GetPrismaClientConfig = {
   }
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"bio\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"image\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"location\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"interests\",\"kind\":\"object\",\"type\":\"UserInterest\",\"relationName\":\"UserToUserInterest\"},{\"name\":\"hostedEvents\",\"kind\":\"object\",\"type\":\"Event\",\"relationName\":\"HostedEvents\"},{\"name\":\"joinedEvents\",\"kind\":\"object\",\"type\":\"Participant\",\"relationName\":\"ParticipantToUser\"},{\"name\":\"reviews\",\"kind\":\"object\",\"type\":\"Review\",\"relationName\":\"UserReviews\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"payments\",\"kind\":\"object\",\"type\":\"Payment\",\"relationName\":\"PaymentToUser\"}],\"dbName\":null},\"Interest\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"users\",\"kind\":\"object\",\"type\":\"UserInterest\",\"relationName\":\"InterestToUserInterest\"}],\"dbName\":null},\"UserInterest\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToUserInterest\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"interest\",\"kind\":\"object\",\"type\":\"Interest\",\"relationName\":\"InterestToUserInterest\"},{\"name\":\"interestId\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"Event\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"date\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"location\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"minParticipants\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"maxParticipants\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"image\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"joiningFee\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"EventStatus\"},{\"name\":\"host\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"HostedEvents\"},{\"name\":\"hostId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"participants\",\"kind\":\"object\",\"type\":\"Participant\",\"relationName\":\"EventToParticipant\"},{\"name\":\"reviews\",\"kind\":\"object\",\"type\":\"Review\",\"relationName\":\"EventToReview\"},{\"name\":\"payments\",\"kind\":\"object\",\"type\":\"Payment\",\"relationName\":\"EventToPayment\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Participant\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ParticipantToUser\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"event\",\"kind\":\"object\",\"type\":\"Event\",\"relationName\":\"EventToParticipant\"},{\"name\":\"eventId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Review\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"rating\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"comment\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"reviewer\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserReviews\"},{\"name\":\"reviewerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"event\",\"kind\":\"object\",\"type\":\"Event\",\"relationName\":\"EventToReview\"},{\"name\":\"eventId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Payment\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PaymentToUser\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"event\",\"kind\":\"object\",\"type\":\"Event\",\"relationName\":\"EventToPayment\"},{\"name\":\"eventId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"transactionId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"PaymentStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
   const { Buffer } = await import('node:buffer')
@@ -183,6 +183,66 @@ export interface PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.interest`: Exposes CRUD operations for the **Interest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Interests
+    * const interests = await prisma.interest.findMany()
+    * ```
+    */
+  get interest(): Prisma.InterestDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.userInterest`: Exposes CRUD operations for the **UserInterest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UserInterests
+    * const userInterests = await prisma.userInterest.findMany()
+    * ```
+    */
+  get userInterest(): Prisma.UserInterestDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.event`: Exposes CRUD operations for the **Event** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Events
+    * const events = await prisma.event.findMany()
+    * ```
+    */
+  get event(): Prisma.EventDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.participant`: Exposes CRUD operations for the **Participant** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Participants
+    * const participants = await prisma.participant.findMany()
+    * ```
+    */
+  get participant(): Prisma.ParticipantDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.review`: Exposes CRUD operations for the **Review** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Reviews
+    * const reviews = await prisma.review.findMany()
+    * ```
+    */
+  get review(): Prisma.ReviewDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.payment`: Exposes CRUD operations for the **Payment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Payments
+    * const payments = await prisma.payment.findMany()
+    * ```
+    */
+  get payment(): Prisma.PaymentDelegate<ExtArgs, { omit: OmitOpts }>;
 }
 
 export function getPrismaClientClass(): PrismaClientConstructor {
