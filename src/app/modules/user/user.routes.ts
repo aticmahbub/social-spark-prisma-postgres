@@ -16,4 +16,6 @@ router.post(
     },
 );
 
+router.get('/users', UserController.getAllUsers);
+
 export const UserRoutes: Router = router;

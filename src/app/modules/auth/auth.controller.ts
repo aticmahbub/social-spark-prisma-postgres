@@ -1,8 +1,7 @@
 import type {NextFunction, Request, Response} from 'express';
-import {catchAsync} from '../../../utils/catchAsync.js';
-import {sendResponse} from '../../../utils/sendResponse.js';
-import {UserService} from '../user.service.js';
 import {AuthService} from './auth.service.js';
+import {catchAsync} from '../../utils/catchAsync.js';
+import {sendResponse} from '../../utils/sendResponse.js';
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
     const result = await AuthService.loginUser(req.body);

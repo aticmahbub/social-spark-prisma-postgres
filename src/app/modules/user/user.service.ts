@@ -5,6 +5,9 @@ import bcrypt from 'bcryptjs';
 import type {CreateUserInput} from './user.interface.js';
 import type {Request} from 'express';
 import {fileUploader} from '../../utils/fileUploader.js';
+import {calculatePagination} from '../../utils/pagination.js';
+import type {Prisma} from '../../../generated/prisma/client.js';
+import {userSearchableFields} from './user.constants.js';
 
 const createUser = async (req: Request) => {
     if (req.file) {
@@ -41,4 +44,61 @@ const createUser = async (req: Request) => {
     return safeUser;
 };
 
-export const UserService = {createUser};
+const getAllUsers = async (params, options) => {
+    const {page, limit, skip, sortBy, sortOrder} = calculatePagination(options);
+    const {searchTerm, ...filterData} = params;
+
+    const andConditions: Prisma.UserWhereInput[] = [];
+
+    if (searchTerm) {
+        andConditions.push({
+            OR: userSearchableFields.map((field) => ({
+                [field]: {
+                    contains: searchTerm,
+                    mode: 'insensitive',
+                },
+            })),
+        });
+    }
+
+    if (Object.keys(filterData).length > 0) {
+        andConditions.push({
+            AND: Object.keys(filterData).map((key) => ({
+                [key]: {
+                    equals: (filterData as any)[key],
+                },
+            })),
+        });
+    }
+
+    const whereConditions: Prisma.UserWhereInput =
+        andConditions.length > 0
+            ? {
+                  AND: andConditions,
+              }
+            : {};
+
+    const result = await prisma.user.findMany({
+        skip,
+        take: limit,
+
+        where: whereConditions,
+        orderBy: {
+            [sortBy]: sortOrder,
+        },
+    });
+
+    const total = await prisma.user.count({
+        where: whereConditions,
+    });
+    return {
+        meta: {
+            page,
+            limit,
+            total,
+        },
+        data: result,
+    };
+};
+
+export const UserService = {createUser, getAllUsers};
