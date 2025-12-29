@@ -4,6 +4,7 @@ import {prisma} from '../../../lib/prisma.js';
 import AppError from '../../../errorHelpers/appError.js';
 import {generateToken} from '../../utils/jwt.js';
 import {envVars} from '../../../config/index.js';
+import {createUserTokens} from '../../utils/userTokens.js';
 
 const loginUser = async (payload: {email: string; password: string}) => {
     const user = await prisma.user.findUniqueOrThrow({
@@ -19,17 +20,19 @@ const loginUser = async (payload: {email: string; password: string}) => {
         throw new AppError(404, 'Password is not correct');
     }
 
-    const accessToken = generateToken(
-        {email: user.email, role: user.role},
-        envVars.JWT.JWT_ACCESS_SECRET,
-        envVars.JWT.JWT_ACCESS_EXPIRES,
-    );
-    const refreshToken = generateToken(
-        {email: user.email, role: user.role},
-        envVars.JWT.JWT_REFRESH_SECRET,
-        envVars.JWT.JWT_REFRESH_EXPIRES,
-    );
-    return {accessToken, refreshToken};
+    if (user.isDeleted) {
+        throw new AppError(410, 'User is deleted');
+    }
+
+    const userTokens = createUserTokens(user);
+
+    const userWithoutPassword = {...user, password: undefined};
+
+    return {
+        accessToken: userTokens.accessToken,
+        refreshToken: userTokens.refreshToken,
+        user: userWithoutPassword,
+    };
 };
 
 export const AuthService = {loginUser};
