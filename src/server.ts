@@ -26,7 +26,6 @@ async function bootstrap() {
 
 (async () => {
     await bootstrap();
-    // await seedSuperAdmin();
 })();
 
 process.on('unhandledRejection', (reason) => {

@@ -17,15 +17,15 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
-    const filters = pick(req.query, userFilterableFields); // searching , filtering
-    const options = pick(req.query, ['page', 'limit', 'sortBy', 'sortOrder']); // pagination and sorting
+    const filters = pick(req.query, userFilterableFields);
+    const options = pick(req.query, ['page', 'limit', 'sortBy', 'sortOrder']);
 
     const result = await UserService.getAllUsers(filters, options);
 
     sendResponse(res, {
         statusCode: 200,
         success: true,
-        message: 'User retrive successfully!',
+        message: 'User data is retrieved successfully!',
         meta: result.meta,
         data: result.data,
     });

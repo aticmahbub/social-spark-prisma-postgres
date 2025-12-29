@@ -6,11 +6,13 @@ import {sendResponse} from '../../utils/sendResponse.js';
 const loginUser = catchAsync(async (req: Request, res: Response) => {
     const result = await AuthService.loginUser(req.body);
     const {accessToken, refreshToken} = result;
+
     res.cookie('accessToken', accessToken, {
         secure: true,
         sameSite: true,
         httpOnly: true,
     });
+
     res.cookie('refreshToken', refreshToken, {
         secure: true,
         sameSite: true,
@@ -21,7 +23,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
         success: true,
         statusCode: 201,
         message: 'User logged in successfully',
-        data: 'user',
+        data: result,
     });
 });
 

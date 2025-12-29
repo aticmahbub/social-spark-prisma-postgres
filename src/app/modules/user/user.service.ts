@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs';
 import type {CreateUserInput} from './user.interface.js';
 import type {Request} from 'express';
 import {fileUploader} from '../../utils/fileUploader.js';
-import {calculatePagination} from '../../utils/pagination.js';
+import {calculatePagination, type IOptions} from '../../utils/pagination.js';
 import type {Prisma} from '../../../generated/prisma/client.js';
 import {userSearchableFields} from './user.constants.js';
 
@@ -44,7 +44,7 @@ const createUser = async (req: Request) => {
     return safeUser;
 };
 
-const getAllUsers = async (params, options) => {
+const getAllUsers = async (params: any, options: IOptions) => {
     const {page, limit, skip, sortBy, sortOrder} = calculatePagination(options);
     const {searchTerm, ...filterData} = params;
 

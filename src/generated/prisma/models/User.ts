@@ -33,6 +33,7 @@ export type UserMinAggregateOutputType = {
   image: string | null
   location: string | null
   role: $Enums.Role | null
+  isDeleted: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -46,6 +47,7 @@ export type UserMaxAggregateOutputType = {
   image: string | null
   location: string | null
   role: $Enums.Role | null
+  isDeleted: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -59,6 +61,7 @@ export type UserCountAggregateOutputType = {
   image: number
   location: number
   role: number
+  isDeleted: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -74,6 +77,7 @@ export type UserMinAggregateInputType = {
   image?: true
   location?: true
   role?: true
+  isDeleted?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -87,6 +91,7 @@ export type UserMaxAggregateInputType = {
   image?: true
   location?: true
   role?: true
+  isDeleted?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -100,6 +105,7 @@ export type UserCountAggregateInputType = {
   image?: true
   location?: true
   role?: true
+  isDeleted?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -186,6 +192,7 @@ export type UserGroupByOutputType = {
   image: string | null
   location: string | null
   role: $Enums.Role
+  isDeleted: boolean
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -220,6 +227,7 @@ export type UserWhereInput = {
   image?: Prisma.StringNullableFilter<"User"> | string | null
   location?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
+  isDeleted?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   interests?: Prisma.UserInterestListRelationFilter
@@ -238,6 +246,7 @@ export type UserOrderByWithRelationInput = {
   image?: Prisma.SortOrderInput | Prisma.SortOrder
   location?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   interests?: Prisma.UserInterestOrderByRelationAggregateInput
@@ -259,6 +268,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   image?: Prisma.StringNullableFilter<"User"> | string | null
   location?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
+  isDeleted?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   interests?: Prisma.UserInterestListRelationFilter
@@ -277,6 +287,7 @@ export type UserOrderByWithAggregationInput = {
   image?: Prisma.SortOrderInput | Prisma.SortOrder
   location?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -296,6 +307,7 @@ export type UserScalarWhereWithAggregatesInput = {
   image?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   location?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
+  isDeleted?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -309,6 +321,7 @@ export type UserCreateInput = {
   image?: string | null
   location?: string | null
   role?: $Enums.Role
+  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   interests?: Prisma.UserInterestCreateNestedManyWithoutUserInput
@@ -327,6 +340,7 @@ export type UserUncheckedCreateInput = {
   image?: string | null
   location?: string | null
   role?: $Enums.Role
+  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   interests?: Prisma.UserInterestUncheckedCreateNestedManyWithoutUserInput
@@ -345,6 +359,7 @@ export type UserUpdateInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   interests?: Prisma.UserInterestUpdateManyWithoutUserNestedInput
@@ -363,6 +378,7 @@ export type UserUncheckedUpdateInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   interests?: Prisma.UserInterestUncheckedUpdateManyWithoutUserNestedInput
@@ -381,6 +397,7 @@ export type UserCreateManyInput = {
   image?: string | null
   location?: string | null
   role?: $Enums.Role
+  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -394,6 +411,7 @@ export type UserUpdateManyMutationInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -407,6 +425,7 @@ export type UserUncheckedUpdateManyInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -420,6 +439,7 @@ export type UserCountOrderByAggregateInput = {
   image?: Prisma.SortOrder
   location?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -433,6 +453,7 @@ export type UserMaxOrderByAggregateInput = {
   image?: Prisma.SortOrder
   location?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -446,6 +467,7 @@ export type UserMinOrderByAggregateInput = {
   image?: Prisma.SortOrder
   location?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -465,6 +487,10 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type EnumRoleFieldUpdateOperationsInput = {
   set?: $Enums.Role
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -550,6 +576,7 @@ export type UserCreateWithoutInterestsInput = {
   image?: string | null
   location?: string | null
   role?: $Enums.Role
+  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   hostedEvents?: Prisma.EventCreateNestedManyWithoutHostInput
@@ -567,6 +594,7 @@ export type UserUncheckedCreateWithoutInterestsInput = {
   image?: string | null
   location?: string | null
   role?: $Enums.Role
+  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   hostedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutHostInput
@@ -600,6 +628,7 @@ export type UserUpdateWithoutInterestsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   hostedEvents?: Prisma.EventUpdateManyWithoutHostNestedInput
@@ -617,6 +646,7 @@ export type UserUncheckedUpdateWithoutInterestsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   hostedEvents?: Prisma.EventUncheckedUpdateManyWithoutHostNestedInput
@@ -634,6 +664,7 @@ export type UserCreateWithoutHostedEventsInput = {
   image?: string | null
   location?: string | null
   role?: $Enums.Role
+  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   interests?: Prisma.UserInterestCreateNestedManyWithoutUserInput
@@ -651,6 +682,7 @@ export type UserUncheckedCreateWithoutHostedEventsInput = {
   image?: string | null
   location?: string | null
   role?: $Enums.Role
+  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   interests?: Prisma.UserInterestUncheckedCreateNestedManyWithoutUserInput
@@ -684,6 +716,7 @@ export type UserUpdateWithoutHostedEventsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   interests?: Prisma.UserInterestUpdateManyWithoutUserNestedInput
@@ -701,6 +734,7 @@ export type UserUncheckedUpdateWithoutHostedEventsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   interests?: Prisma.UserInterestUncheckedUpdateManyWithoutUserNestedInput
@@ -718,6 +752,7 @@ export type UserCreateWithoutJoinedEventsInput = {
   image?: string | null
   location?: string | null
   role?: $Enums.Role
+  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   interests?: Prisma.UserInterestCreateNestedManyWithoutUserInput
@@ -735,6 +770,7 @@ export type UserUncheckedCreateWithoutJoinedEventsInput = {
   image?: string | null
   location?: string | null
   role?: $Enums.Role
+  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   interests?: Prisma.UserInterestUncheckedCreateNestedManyWithoutUserInput
@@ -768,6 +804,7 @@ export type UserUpdateWithoutJoinedEventsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   interests?: Prisma.UserInterestUpdateManyWithoutUserNestedInput
@@ -785,6 +822,7 @@ export type UserUncheckedUpdateWithoutJoinedEventsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   interests?: Prisma.UserInterestUncheckedUpdateManyWithoutUserNestedInput
@@ -802,6 +840,7 @@ export type UserCreateWithoutReviewsInput = {
   image?: string | null
   location?: string | null
   role?: $Enums.Role
+  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   interests?: Prisma.UserInterestCreateNestedManyWithoutUserInput
@@ -819,6 +858,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   image?: string | null
   location?: string | null
   role?: $Enums.Role
+  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   interests?: Prisma.UserInterestUncheckedCreateNestedManyWithoutUserInput
@@ -852,6 +892,7 @@ export type UserUpdateWithoutReviewsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   interests?: Prisma.UserInterestUpdateManyWithoutUserNestedInput
@@ -869,6 +910,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   interests?: Prisma.UserInterestUncheckedUpdateManyWithoutUserNestedInput
@@ -886,6 +928,7 @@ export type UserCreateWithoutPaymentsInput = {
   image?: string | null
   location?: string | null
   role?: $Enums.Role
+  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   interests?: Prisma.UserInterestCreateNestedManyWithoutUserInput
@@ -903,6 +946,7 @@ export type UserUncheckedCreateWithoutPaymentsInput = {
   image?: string | null
   location?: string | null
   role?: $Enums.Role
+  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   interests?: Prisma.UserInterestUncheckedCreateNestedManyWithoutUserInput
@@ -936,6 +980,7 @@ export type UserUpdateWithoutPaymentsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   interests?: Prisma.UserInterestUpdateManyWithoutUserNestedInput
@@ -953,6 +998,7 @@ export type UserUncheckedUpdateWithoutPaymentsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   interests?: Prisma.UserInterestUncheckedUpdateManyWithoutUserNestedInput
@@ -1037,6 +1083,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   image?: boolean
   location?: boolean
   role?: boolean
+  isDeleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   interests?: boolean | Prisma.User$interestsArgs<ExtArgs>
@@ -1056,6 +1103,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   image?: boolean
   location?: boolean
   role?: boolean
+  isDeleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1069,6 +1117,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   image?: boolean
   location?: boolean
   role?: boolean
+  isDeleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1082,11 +1131,12 @@ export type UserSelectScalar = {
   image?: boolean
   location?: boolean
   role?: boolean
+  isDeleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "bio" | "image" | "location" | "role" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "bio" | "image" | "location" | "role" | "isDeleted" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   interests?: boolean | Prisma.User$interestsArgs<ExtArgs>
   hostedEvents?: boolean | Prisma.User$hostedEventsArgs<ExtArgs>
@@ -1116,6 +1166,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     image: string | null
     location: string | null
     role: $Enums.Role
+    isDeleted: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1554,6 +1605,7 @@ export interface UserFieldRefs {
   readonly image: Prisma.FieldRef<"User", 'String'>
   readonly location: Prisma.FieldRef<"User", 'String'>
   readonly role: Prisma.FieldRef<"User", 'Role'>
+  readonly isDeleted: Prisma.FieldRef<"User", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
