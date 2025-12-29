@@ -3,7 +3,7 @@ import {verifyToken} from '../utils/jwt.js';
 import {envVars} from '../../config/index.js';
 import type {JwtPayload} from 'jsonwebtoken';
 import {prisma} from '../../lib/prisma.js';
-import AppError from '../../errorHelpers/appError.js';
+import AppError from '../errorHelpers/appError.js';
 
 export const checkAuth =
     (...authRoles: string[]) =>

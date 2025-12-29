@@ -1,10 +1,7 @@
 import bcrypt from 'bcryptjs';
-import jwt, {type SignOptions} from 'jsonwebtoken';
-import {prisma} from '../../../lib/prisma.js';
-import AppError from '../../../errorHelpers/appError.js';
-import {generateToken} from '../../utils/jwt.js';
-import {envVars} from '../../../config/index.js';
+import AppError from '../../errorHelpers/appError.js';
 import {createUserTokens} from '../../utils/userTokens.js';
+import {prisma} from '../../../lib/prisma.js';
 
 const loginUser = async (payload: {email: string; password: string}) => {
     const user = await prisma.user.findUniqueOrThrow({

@@ -3,7 +3,7 @@ import {UserController} from './user.controller.js';
 import {fileUploader} from '../../utils/fileUploader.js';
 import {UserValidation} from './user.validation.js';
 import {checkAuth} from '../../middlewares/checkAuth.js';
-import {Role} from '../../../generated/prisma/enums.js';
+import {Role} from '../../../generated/enums.js';
 
 const router = Router();
 

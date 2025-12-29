@@ -1,13 +1,13 @@
 import {envVars} from '../../../config/index.js';
-import AppError from '../../../errorHelpers/appError.js';
+import AppError from '../../errorHelpers/appError.js';
 import {prisma} from '../../../lib/prisma.js';
 import bcrypt from 'bcryptjs';
 import type {CreateUserInput} from './user.interface.js';
 import type {Request} from 'express';
 import {fileUploader} from '../../utils/fileUploader.js';
 import {calculatePagination, type IOptions} from '../../utils/pagination.js';
-import type {Prisma} from '../../../generated/prisma/client.js';
 import {userSearchableFields} from './user.constants.js';
+import type {Prisma} from '../../../generated/client.js';
 
 const createUser = async (req: Request) => {
     if (req.file) {

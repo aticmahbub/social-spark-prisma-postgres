@@ -1,0 +1,18 @@
+
+// INTEREST TAGS
+model Interest {
+  id    String          @id @default(uuid())
+  name  String          @unique
+  users UserInterest[]
+}
+
+// USER–INTEREST PIVOT TABLE
+model UserInterest {
+  id         String    @id @default(uuid())
+
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+
+  interest   Interest @relation(fields: [interestId], references: [id])
+  interestId String
+}

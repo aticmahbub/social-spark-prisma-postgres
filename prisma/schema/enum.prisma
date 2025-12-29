@@ -1,0 +1,21 @@
+enum Role {
+  USER
+  HOST
+  ADMIN
+  PARTICIPANT
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+
+
+enum EventStatus {
+  OPEN
+  FULL
+  CANCELLED
+  COMPLETED
+}
