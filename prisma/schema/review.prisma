@@ -1,14 +1,14 @@
 // REVIEWS
 model Review {
-  id                       String    @id @default(uuid())
-  rating  Int // 1–5 stars
-  comment                  String?
+  id         String    @id @default(uuid())
+  rating     Int
+  comment    String?
 
-  reviewer                 User     @relation("UserReviews", fields: [reviewerId], references: [id])
-  reviewerId               String
+  reviewer   User     @relation("UserReviews", fields: [reviewerId], references: [id])
+  reviewerId String
 
-  event                    Event    @relation(fields: [eventId], references: [id])
-  eventId                  String
+  event      Event    @relation(fields: [eventId], references: [id])
+  eventId    String
 
-  createdAt                DateTime  @default(now())
+  createdAt  DateTime  @default(now())
 }

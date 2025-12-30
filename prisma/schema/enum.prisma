@@ -2,7 +2,6 @@ enum Role {
   USER
   HOST
   ADMIN
-  PARTICIPANT
 }
 
 enum PaymentStatus {
@@ -10,8 +9,6 @@ enum PaymentStatus {
   SUCCESS
   FAILED
 }
-
-
 
 enum EventStatus {
   OPEN
