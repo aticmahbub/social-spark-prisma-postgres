@@ -17,15 +17,28 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const getMyProfile = catchAsync(async (req: Request, res: Response) => {
+const getProfile = catchAsync(async (req: Request, res: Response) => {
     const user = req.user as JwtPayload;
 
-    const result = await UserService.getMyProfile(user);
+    const result = await UserService.getProfile(user);
 
     sendResponse(res, {
         statusCode: 200,
         success: true,
         message: 'Profile fetched successfully',
+        data: result,
+    });
+});
+
+const updateProfile = catchAsync(async (req: Request, res: Response) => {
+    const user = req.user as JwtPayload & {id: string};
+
+    const result = await UserService.updateProfile(req, user);
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Profile updated successfully',
         data: result,
     });
 });
@@ -45,4 +58,9 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-export const UserController = {createUser, getAllUsers, getMyProfile};
+export const UserController = {
+    createUser,
+    getAllUsers,
+    getProfile,
+    updateProfile,
+};

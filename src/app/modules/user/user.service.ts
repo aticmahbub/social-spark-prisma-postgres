@@ -44,32 +44,6 @@ const createUser = async (req: Request) => {
     return safeUser;
 };
 
-const getMyProfile = async (user: JwtPayload) => {
-    const profile = await prisma.user.findUnique({
-        where: {
-            id: user.id,
-            isDeleted: false,
-        },
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            bio: true,
-            image: true,
-            location: true,
-            role: true,
-            createdAt: true,
-            updatedAt: true,
-        },
-    });
-
-    if (!profile) {
-        throw new Error('User not found');
-    }
-
-    return profile;
-};
-
 const getAllUsers = async (params: any, options: IOptions) => {
     const {page, limit, skip, sortBy, sortOrder} = calculatePagination(options);
     const {searchTerm, ...filterData} = params;
@@ -127,4 +101,67 @@ const getAllUsers = async (params: any, options: IOptions) => {
     };
 };
 
-export const UserService = {createUser, getAllUsers, getMyProfile};
+const getProfile = async (user: JwtPayload) => {
+    const profile = await prisma.user.findUnique({
+        where: {
+            id: user.id,
+            isDeleted: false,
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            bio: true,
+            image: true,
+            location: true,
+            role: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    });
+
+    if (!profile) {
+        throw new Error('User not found');
+    }
+
+    return profile;
+};
+
+const updateProfile = async (req: Request, user: JwtPayload & {id: string}) => {
+    if (req.file) {
+        const uploadResult = await fileUploader.uploadToCloudinary(req.file);
+        req.body.image = uploadResult?.secure_url;
+    }
+
+    const allowedFields = ['name', 'bio', 'image', 'location'];
+
+    const updateData: Record<string, any> = {};
+
+    for (const field of allowedFields) {
+        if (req.body[field] !== undefined) {
+            updateData[field] = req.body[field];
+        }
+    }
+
+    const updatedUser = await prisma.user.update({
+        where: {
+            id: user.id,
+            isDeleted: false,
+        },
+        data: updateData,
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            bio: true,
+            image: true,
+            location: true,
+            role: true,
+            updatedAt: true,
+        },
+    });
+
+    return updatedUser;
+};
+
+export const UserService = {createUser, getAllUsers, getProfile, updateProfile};
