@@ -3,6 +3,13 @@ import {catchAsync} from '../../utils/catchAsync.js';
 import {sendResponse} from '../../utils/sendResponse.js';
 import {EventService} from './event.service.js';
 import type {JwtPayload} from 'jsonwebtoken';
+import pick from '../../utils/pick.js';
+import {calculatePagination} from '../../utils/pagination.js';
+import type {Prisma} from '../../../generated/client.js';
+import {
+    eventFilterableFields,
+    eventSearchableFields,
+} from './event.constants.js';
 
 const createEvent = catchAsync(async (req: Request, res: Response) => {
     const user = req.user;
@@ -17,13 +24,17 @@ const createEvent = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getEvents = catchAsync(async (req: Request, res: Response) => {
-    const result = await EventService.getEvents();
+    const options = pick(req.query, ['page', 'limit', 'sortBy', 'sortOrder']);
+    const filters = pick(req.query, eventFilterableFields);
+
+    const result = await EventService.getEvents(filters, options);
 
     sendResponse(res, {
         statusCode: 200,
         success: true,
         message: 'Events retrieved successfully',
-        data: result,
+        data: result.data,
+        meta: result.meta,
     });
 });
 

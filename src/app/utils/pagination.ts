@@ -1,6 +1,8 @@
 export interface IOptions {
-    page?: number;
-    limit?: number;
+    page?: string | number;
+    limit?: string | number;
+    skip?: string | number;
+
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
 }
