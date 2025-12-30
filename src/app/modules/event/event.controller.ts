@@ -38,4 +38,18 @@ const getEvents = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-export const EventController = {createEvent, getEvents};
+const joinEvent = catchAsync(async (req: Request, res: Response) => {
+    const user = req.user as JwtPayload;
+    const eventId = req.body.eventId;
+
+    const result = await EventService.joinEvent(user, eventId);
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Joined event successfully',
+        data: result,
+    });
+});
+
+export const EventController = {createEvent, getEvents, joinEvent};

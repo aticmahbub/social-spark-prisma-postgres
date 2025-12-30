@@ -9,4 +9,6 @@ router.get('/', EventController.getEvents);
 
 router.post('/', checkAuth(Role.HOST, Role.USER), EventController.createEvent);
 
+router.post('/join', checkAuth(Role.USER), EventController.joinEvent);
+
 export const EventRoutes: Router = router;
