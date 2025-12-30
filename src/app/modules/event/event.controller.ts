@@ -4,12 +4,7 @@ import {sendResponse} from '../../utils/sendResponse.js';
 import {EventService} from './event.service.js';
 import type {JwtPayload} from 'jsonwebtoken';
 import pick from '../../utils/pick.js';
-import {calculatePagination} from '../../utils/pagination.js';
-import type {Prisma} from '../../../generated/client.js';
-import {
-    eventFilterableFields,
-    eventSearchableFields,
-} from './event.constants.js';
+import {eventFilterableFields} from './event.constants.js';
 
 const createEvent = catchAsync(async (req: Request, res: Response) => {
     const user = req.user;
@@ -18,7 +13,7 @@ const createEvent = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: 201,
         success: true,
-        message: 'Booking created successfully',
+        message: 'Event created successfully',
         data: result,
     });
 });
@@ -52,4 +47,22 @@ const joinEvent = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-export const EventController = {createEvent, getEvents, joinEvent};
+const getMyHostedEvents = catchAsync(async (req: Request, res: Response) => {
+    const user = req.user as JwtPayload & {id: string};
+
+    const result = await EventService.getMyHostedEvents(user);
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Hosted events fetched successfully',
+        data: result,
+    });
+});
+
+export const EventController = {
+    createEvent,
+    getEvents,
+    joinEvent,
+    getMyHostedEvents,
+};

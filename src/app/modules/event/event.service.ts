@@ -122,4 +122,37 @@ const joinEvent = async (user: JwtPayload, eventId: string) => {
     return participant;
 };
 
-export const EventService = {createEvent, getEvents, joinEvent};
+const getMyHostedEvents = async (user: JwtPayload & {id: string}) => {
+    if (user.role !== Role.HOST) {
+        throw new Error('Only hosts can access hosted events');
+    }
+
+    const events = await prisma.event.findMany({
+        where: {
+            hostId: user.id,
+        },
+        orderBy: {
+            createdAt: 'desc',
+        },
+        include: {
+            participants: {
+                select: {
+                    id: true,
+                },
+            },
+        },
+    });
+
+    return events.map((event) => ({
+        ...event,
+        participantCount: event.participants.length,
+        participants: undefined, // optional: remove raw participants array
+    }));
+};
+
+export const EventService = {
+    createEvent,
+    getEvents,
+    joinEvent,
+    getMyHostedEvents,
+};

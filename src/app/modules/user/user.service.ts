@@ -2,7 +2,6 @@ import {envVars} from '../../../config/index.js';
 import AppError from '../../errorHelpers/appError.js';
 import {prisma} from '../../../lib/prisma.js';
 import bcrypt from 'bcryptjs';
-import type {CreateUserInput} from './user.interface.js';
 import type {Request} from 'express';
 import {fileUploader} from '../../utils/fileUploader.js';
 import {calculatePagination, type IOptions} from '../../utils/pagination.js';
@@ -32,7 +31,7 @@ const createUser = async (req: Request) => {
             name: req.body.name,
             email: req.body.email,
             password: hashedPassword,
-            role: req.body.role ?? 'USER',
+            role: req.body.role,
             bio: req.body.bio ?? null,
             image: req.body.image ?? null,
             location: req.body.location ?? null,

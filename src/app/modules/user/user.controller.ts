@@ -11,7 +11,7 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         success: true,
         statusCode: 201,
-        message: 'User Created Successfully',
+        message: 'User is Created Successfully',
         data: user,
     });
 });
