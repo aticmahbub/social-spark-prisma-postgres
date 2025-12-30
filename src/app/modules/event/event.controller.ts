@@ -60,9 +60,28 @@ const getMyHostedEvents = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const updateMyEvent = catchAsync(async (req: Request, res: Response) => {
+    const user = req.user as JwtPayload & {id: string};
+    const {eventId} = req.params;
+
+    const result = await EventService.updateMyEvent(
+        user,
+        eventId as string,
+        req.body,
+    );
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Event updated successfully',
+        data: result,
+    });
+});
+
 export const EventController = {
     createEvent,
     getEvents,
     joinEvent,
     getMyHostedEvents,
+    updateMyEvent,
 };

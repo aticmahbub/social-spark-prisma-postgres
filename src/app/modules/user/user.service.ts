@@ -6,7 +6,7 @@ import type {Request} from 'express';
 import {fileUploader} from '../../utils/fileUploader.js';
 import {calculatePagination, type IOptions} from '../../utils/pagination.js';
 import {userSearchableFields} from './user.constants.js';
-import type {Prisma} from '../../../generated/client.js';
+import {Role, type Prisma} from '../../../generated/client.js';
 import type {JwtPayload} from 'jsonwebtoken';
 
 const createUser = async (req: Request) => {
@@ -86,6 +86,7 @@ const getAllUsers = async (params: any, options: IOptions) => {
         orderBy: {
             [sortBy]: sortOrder,
         },
+        omit: {password: true},
     });
 
     const total = await prisma.user.count({
@@ -117,6 +118,8 @@ const getProfile = async (user: JwtPayload) => {
             role: true,
             createdAt: true,
             updatedAt: true,
+            joinedEvents: user.role === Role.USER ? true : false,
+            hostedEvents: user.role === Role.HOST ? true : false,
         },
     });
 

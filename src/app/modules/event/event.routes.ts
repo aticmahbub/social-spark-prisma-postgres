@@ -13,8 +13,14 @@ router.post('/join', checkAuth(Role.USER), EventController.joinEvent);
 
 router.get(
     '/my-events',
-    checkAuth(Role.HOST),
+    checkAuth(Role.HOST, Role.USER),
     EventController.getMyHostedEvents,
+);
+
+router.patch(
+    '/my-events/:eventId',
+    checkAuth(Role.HOST),
+    EventController.updateMyEvent,
 );
 
 export const EventRoutes: Router = router;
