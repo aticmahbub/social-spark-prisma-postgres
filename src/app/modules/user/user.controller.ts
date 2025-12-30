@@ -4,6 +4,7 @@ import {sendResponse} from '../../utils/sendResponse.js';
 import {UserService} from './user.service.js';
 import pick from '../../utils/pick.js';
 import {userFilterableFields} from './user.constants.js';
+import type {JwtPayload} from 'jsonwebtoken';
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
     const user = await UserService.createUser(req);
@@ -13,6 +14,19 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
         statusCode: 201,
         message: 'User is Created Successfully',
         data: user,
+    });
+});
+
+const getMyProfile = catchAsync(async (req: Request, res: Response) => {
+    const user = req.user as JwtPayload;
+
+    const result = await UserService.getMyProfile(user);
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Profile fetched successfully',
+        data: result,
     });
 });
 
@@ -31,4 +45,4 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-export const UserController = {createUser, getAllUsers};
+export const UserController = {createUser, getAllUsers, getMyProfile};

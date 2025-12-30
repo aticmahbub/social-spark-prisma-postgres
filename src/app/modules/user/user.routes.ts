@@ -8,6 +8,11 @@ import {Role} from '../../../generated/enums.js';
 const router = Router();
 
 router.get('/users', checkAuth(Role.ADMIN), UserController.getAllUsers);
+router.get(
+    '/profile',
+    checkAuth(Role.USER, Role.HOST, Role.ADMIN),
+    UserController.getMyProfile,
+);
 
 router.post(
     '/create-user',

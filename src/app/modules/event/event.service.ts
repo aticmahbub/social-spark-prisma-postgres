@@ -47,6 +47,9 @@ const getEvents = async (filters: any, options: IOptions) => {
         });
     }
 
+    // ✅ Default visibility
+    // andConditions.push({status: 'OPEN'}, {date: {gte: new Date()}});
+
     const whereConditions: Prisma.EventWhereInput =
         andConditions.length > 0 ? {AND: andConditions} : {};
 
@@ -55,6 +58,14 @@ const getEvents = async (filters: any, options: IOptions) => {
         take: limit,
         where: {AND: andConditions},
         orderBy: {[sortBy]: sortOrder},
+        include: {
+            _count: {
+                select: {
+                    participants: true,
+                },
+            },
+            participants: true,
+        },
     });
 
     const total = await prisma.event.count({

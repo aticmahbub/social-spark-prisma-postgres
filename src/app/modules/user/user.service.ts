@@ -7,6 +7,7 @@ import {fileUploader} from '../../utils/fileUploader.js';
 import {calculatePagination, type IOptions} from '../../utils/pagination.js';
 import {userSearchableFields} from './user.constants.js';
 import type {Prisma} from '../../../generated/client.js';
+import type {JwtPayload} from 'jsonwebtoken';
 
 const createUser = async (req: Request) => {
     if (req.file) {
@@ -41,6 +42,32 @@ const createUser = async (req: Request) => {
     const {password, ...safeUser} = user;
 
     return safeUser;
+};
+
+const getMyProfile = async (user: JwtPayload) => {
+    const profile = await prisma.user.findUnique({
+        where: {
+            id: user.id,
+            isDeleted: false,
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            bio: true,
+            image: true,
+            location: true,
+            role: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    });
+
+    if (!profile) {
+        throw new Error('User not found');
+    }
+
+    return profile;
 };
 
 const getAllUsers = async (params: any, options: IOptions) => {
@@ -100,4 +127,4 @@ const getAllUsers = async (params: any, options: IOptions) => {
     };
 };
 
-export const UserService = {createUser, getAllUsers};
+export const UserService = {createUser, getAllUsers, getMyProfile};
