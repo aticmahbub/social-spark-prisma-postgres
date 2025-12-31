@@ -72,11 +72,18 @@ GET /api/events?date=2025-02-01
 GET /api/events?sortBy=date&sortOrder=asc */
 
     if (dateFilters?.from || dateFilters?.to) {
+        const dateFilter: Prisma.DateTimeFilter = {};
+
+        if (dateFilters.from) {
+            dateFilter.gte = new Date(dateFilters.from);
+        }
+
+        if (dateFilters.to) {
+            dateFilter.lte = new Date(dateFilters.to);
+        }
+
         andConditions.push({
-            date: {
-                gte: dateFilters.from ? new Date(dateFilters.from) : undefined,
-                lte: dateFilters.to ? new Date(dateFilters.to) : undefined,
-            },
+            date: dateFilter,
         });
     }
 

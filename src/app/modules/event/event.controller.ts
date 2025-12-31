@@ -24,9 +24,9 @@ const getEvents = catchAsync(async (req: Request, res: Response) => {
     const {from, to, date} = req.query;
 
     const result = await EventService.getEvents(filters, options, {
-        from,
-        to,
-        date,
+        from: from as string,
+        to: to as string,
+        date: date as string,
     });
 
     sendResponse(res, {
