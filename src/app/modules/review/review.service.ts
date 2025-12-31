@@ -53,6 +53,24 @@ const createReview = async (
     return review;
 };
 
+const getHostRating = async (hostId: string) => {
+    const stats = await prisma.review.aggregate({
+        where: {hostId},
+        _avg: {
+            rating: true,
+        },
+        _count: {
+            rating: true,
+        },
+    });
+
+    return {
+        averageRating: Number(stats._avg.rating?.toFixed(1)) || 0,
+        totalReviews: stats._count.rating,
+    };
+};
+
 export const ReviewService = {
     createReview,
+    getHostRating,
 };

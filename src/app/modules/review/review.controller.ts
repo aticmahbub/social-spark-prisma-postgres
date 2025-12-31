@@ -17,6 +17,19 @@ const createReview = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const getHostRating = catchAsync(async (req: Request, res: Response) => {
+    const hostId = req.params.hostId;
+
+    const result = await ReviewService.getHostRating(hostId as string);
+    sendResponse(res, {
+        statusCode: 201,
+        success: true,
+        message: 'Host Reviews fetched successfully',
+        data: result,
+    });
+});
+
 export const ReviewController = {
     createReview,
+    getHostRating,
 };
