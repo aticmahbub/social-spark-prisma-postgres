@@ -130,6 +130,83 @@ const getProfile = async (user: JwtPayload) => {
     return profile;
 };
 
+// For hosts with ratings
+const getHostProfileWithRating = async (user: JwtPayload, id: string) => {
+    console.log(id);
+    const profile = await prisma.user.findUnique({
+        where: {id},
+        select: {
+            id: true,
+            name: true,
+            image: true,
+            bio: true,
+            location: true,
+            role: true,
+            receivedReviews: {
+                select: {rating: true},
+            },
+        },
+    });
+
+    if (!profile) throw new Error('User not found');
+
+    const totalReviews = profile.receivedReviews.length;
+    const avgRating =
+        totalReviews === 0
+            ? 0
+            : profile.receivedReviews.reduce((a, b) => a + b.rating, 0) /
+              totalReviews;
+
+    return {
+        ...profile,
+        averageRating: Number(avgRating.toFixed(1)),
+        totalReviews,
+        receivedReviews: undefined,
+    };
+};
+
+const getPublicHostProfileWithEvents = async (hostId: string) => {
+    const host = await prisma.user.findUnique({
+        where: {id: hostId},
+        select: {
+            id: true,
+            name: true,
+            image: true,
+            bio: true,
+            location: true,
+            hostedEvents: true,
+            receivedReviews: {
+                select: {
+                    rating: true,
+                    comment: true,
+                    createdAt: true,
+                    reviewer: {
+                        select: {
+                            name: true,
+                            image: true,
+                        },
+                    },
+                },
+            },
+        },
+    });
+
+    if (!host) throw new Error('Host not found');
+
+    const totalReviews = host.receivedReviews.length;
+    const avgRating =
+        totalReviews === 0
+            ? 0
+            : host.receivedReviews.reduce((a, b) => a + b.rating, 0) /
+              totalReviews;
+
+    return {
+        ...host,
+        averageRating: Number(avgRating.toFixed(1)),
+        totalReviews,
+    };
+};
+
 const updateProfile = async (req: Request, user: JwtPayload & {id: string}) => {
     if (req.file) {
         const uploadResult = await fileUploader.uploadToCloudinary(req.file);
@@ -167,4 +244,11 @@ const updateProfile = async (req: Request, user: JwtPayload & {id: string}) => {
     return updatedUser;
 };
 
-export const UserService = {createUser, getAllUsers, getProfile, updateProfile};
+export const UserService = {
+    createUser,
+    getAllUsers,
+    getProfile,
+    updateProfile,
+    getHostProfileWithRating,
+    getPublicHostProfileWithEvents,
+};

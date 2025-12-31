@@ -58,9 +58,48 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+// For hosts with ratings
+const getHostProfileWithRating = catchAsync(
+    async (req: Request, res: Response) => {
+        const user = req.user as JwtPayload;
+        const id = req.params.hostId;
+
+        const result = await UserService.getHostProfileWithRating(
+            user,
+            id as string,
+        );
+
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            message: 'Profile fetched successfully',
+            data: result,
+        });
+    },
+);
+
+const getPublicHostProfileWithEvents = catchAsync(
+    async (req: Request, res: Response) => {
+        const id = req.params.hostId;
+
+        const result = await UserService.getPublicHostProfileWithEvents(
+            id as string,
+        );
+
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            message: 'Profile fetched successfully',
+            data: result,
+        });
+    },
+);
+
 export const UserController = {
     createUser,
     getAllUsers,
     getProfile,
     updateProfile,
+    getHostProfileWithRating,
+    getPublicHostProfileWithEvents,
 };
