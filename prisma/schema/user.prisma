@@ -1,21 +1,22 @@
 model User {
-  id           String          @id @default(uuid())
-  name         String
-  email        String          @unique
-  password     String
-  bio          String?
-  image        String?
-  location     String?
-  role         Role            @default(USER)
-  isDeleted    Boolean         @default(false)
+  id              String          @id @default(uuid())
+  name            String
+  email           String          @unique
+  password        String
+  bio             String?
+  image           String?
+  location        String?
+  role            Role            @default(USER)
+  isDeleted       Boolean         @default(false)
 
-  interests    UserInterest[]
-  hostedEvents Event[]        @relation("HostedEvents")
-  joinedEvents Participant[]
-  reviews      Review[]       @relation("UserReviews")
+  interests       UserInterest[]
+  hostedEvents    Event[]        @relation("HostedEvents")
+  joinedEvents    Participant[]
+  reviews         Review[]       @relation("UserReviews")
+  receivedReviews Review[]       @relation("HostReviews")
 
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 
-  payments     Payment[]
+  payments        Payment[]
 }
