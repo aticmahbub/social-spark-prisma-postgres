@@ -161,36 +161,36 @@ const getMyHostedEvents = async (user: JwtPayload & {id: string}) => {
 };
 
 const updateMyEvent = async (
-  user: JwtPayload & { id: string },
-  eventId: string,
-  payload: Partial<Prisma.EventUpdateInput>
+    user: JwtPayload & {id: string},
+    eventId: string,
+    payload: Partial<Prisma.EventUpdateInput>,
 ) => {
-  if (user.role !== Role.HOST) {
-    throw new Error('Only hosts can update events');
-  }
+    if (user.role !== Role.HOST) {
+        throw new Error('Only hosts can update events');
+    }
 
-  const event = await prisma.event.findUnique({
-    where: { id: eventId },
-  });
+    const event = await prisma.event.findUnique({
+        where: {id: eventId},
+    });
 
-  if (!event) {
-    throw new Error('Event not found');
-  }
+    if (!event) {
+        throw new Error('Event not found');
+    }
 
-  if (event.hostId !== user.id) {
-    throw new Error('You are not the owner of this event');
-  }
+    if (event.hostId !== user.id) {
+        throw new Error('You are not the owner of this event');
+    }
 
-  const forbiddenFields = ['hostId', 'createdAt', 'updatedAt'];
+    const forbiddenFields = ['hostId', 'createdAt', 'updatedAt'];
 
-  forbiddenFields.forEach(field => delete (payload as any)[field]);
+    forbiddenFields.forEach((field) => delete (payload as any)[field]);
 
-  const updatedEvent = await prisma.event.update({
-    where: { id: eventId },
-    data: payload,
-  });
+    const updatedEvent = await prisma.event.update({
+        where: {id: eventId},
+        data: payload,
+    });
 
-  return updatedEvent;
+    return updatedEvent;
 };
 
 export const EventService = {
@@ -198,5 +198,5 @@ export const EventService = {
     getEvents,
     joinEvent,
     getMyHostedEvents,
-    updateMyEvent
+    updateMyEvent,
 };
