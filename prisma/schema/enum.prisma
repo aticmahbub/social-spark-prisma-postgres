@@ -16,3 +16,9 @@ enum EventStatus {
   CANCELLED
   COMPLETED
 }
+
+enum UserEventStatus {
+  JOINED
+  INTERESTED
+  DECLINED
+}

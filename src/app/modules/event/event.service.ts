@@ -175,6 +175,31 @@ const joinEvent = async (user: JwtPayload, eventId: string) => {
         throw new Error('You already joined this event');
     }
 
+    // const result = await prisma.$transaction(async (prisma) => {
+    //     const participant = await prisma.participant.create({
+    //         data: {
+    //             userId: user.id,
+    //             eventId,
+    //         },
+    //     });
+
+    //     await prisma.participant.update({
+    //         where: {
+    //             userId: user.id,
+    //             eventId,
+    //         },
+    //         data: {
+    //             // Increment participant count atomically
+    //             // Using raw SQL for atomic increment
+    //             // Alternatively, you can use a separate field to track count
+
+    //             joinedAt: new Date(), // Just to trigger an update
+    //         },
+    //     });
+
+    //     return participant;
+    // });
+
     const participant = await prisma.participant.create({
         data: {
             userId: user.id,

@@ -1,13 +1,15 @@
 model Participant {
-  id       String    @id @default(uuid())
+  id       String           @id @default(uuid())
 
-  user     User     @relation(fields: [userId], references: [id])
+  user     User            @relation(fields: [userId], references: [id])
   userId   String
 
-  event    Event    @relation(fields: [eventId], references: [id])
+  event    Event           @relation(fields: [eventId], references: [id])
   eventId  String
 
-  joinedAt DateTime  @default(now())
+  status   UserEventStatus  @default(INTERESTED)
+
+  joinedAt DateTime         @default(now())
 
   @@unique([userId, eventId]) // 🔐 prevent double join
 }
