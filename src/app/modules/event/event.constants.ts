@@ -1,13 +1,3 @@
-export const eventSearchableFields = [
-    'name',
-    'type',
-    'location',
-    'dateAndTime',
-];
+export const eventSearchableFields = ['name', 'type', 'location'];
 
-export const eventFilterableFields = [
-    'type',
-    'dateAndTime',
-    'location',
-    'status',
-];
+export const eventFilterableFields = ['type', 'location', 'status'];

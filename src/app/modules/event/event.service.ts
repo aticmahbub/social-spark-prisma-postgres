@@ -25,7 +25,15 @@ const createEvent = async (user: JwtPayload, data: CreateEventInput) => {
     return event;
 };
 
-const getEvents = async (filters: any, options: IOptions) => {
+const getEvents = async (
+    filters: any,
+    options: IOptions,
+    dateFilters?: {
+        from?: string;
+        to?: string;
+        date?: string;
+    },
+) => {
     const {page, limit, skip, sortBy, sortOrder} = calculatePagination(options);
     const {search, ...filterData} = filters;
 
@@ -47,6 +55,43 @@ const getEvents = async (filters: any, options: IOptions) => {
         });
     }
 
+    /**
+🔹 Upcoming events
+GET /api/events
+
+🔹 Events from a date
+GET /api/events?from=2025-02-01
+
+🔹 Events between date & time
+GET /api/events?from=2025-02-01T10:00&to=2025-02-01T18:00
+
+🔹 Events on a specific day
+GET /api/events?date=2025-02-01
+
+🔹 Sorted by event time
+GET /api/events?sortBy=date&sortOrder=asc */
+
+    if (dateFilters?.from || dateFilters?.to) {
+        andConditions.push({
+            date: {
+                gte: dateFilters.from ? new Date(dateFilters.from) : undefined,
+                lte: dateFilters.to ? new Date(dateFilters.to) : undefined,
+            },
+        });
+    }
+
+    if (dateFilters?.date) {
+        const start = new Date(dateFilters.date);
+        const end = new Date(dateFilters.date);
+        end.setHours(23, 59, 59, 999);
+
+        andConditions.push({
+            date: {
+                gte: start,
+                lte: end,
+            },
+        });
+    }
     // ✅ Default visibility
     // andConditions.push({status: 'OPEN'}, {date: {gte: new Date()}});
 

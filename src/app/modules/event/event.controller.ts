@@ -21,8 +21,13 @@ const createEvent = catchAsync(async (req: Request, res: Response) => {
 const getEvents = catchAsync(async (req: Request, res: Response) => {
     const options = pick(req.query, ['page', 'limit', 'sortBy', 'sortOrder']);
     const filters = pick(req.query, eventFilterableFields);
+    const {from, to, date} = req.query;
 
-    const result = await EventService.getEvents(filters, options);
+    const result = await EventService.getEvents(filters, options, {
+        from,
+        to,
+        date,
+    });
 
     sendResponse(res, {
         statusCode: 200,
