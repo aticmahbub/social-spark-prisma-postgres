@@ -5,8 +5,9 @@ import {EventStatus, Role} from '../../../generated/enums.js';
 import {calculatePagination, type IOptions} from '../../utils/pagination.js';
 import type {Prisma} from '../../../generated/client.js';
 import {eventFilterableFields} from './event.constants.js';
-import {fi} from 'zod/locales';
-import type {equal} from 'assert';
+import {v4 as uuid} from 'uuid';
+import {stripe} from '../../../lib/stripe.js';
+import {envVars} from '../../../config/index.js';
 
 const createEvent = async (user: JwtPayload, data: CreateEventInput) => {
     if (user.role !== Role.HOST) {
@@ -175,39 +176,45 @@ const joinEvent = async (user: JwtPayload, eventId: string) => {
         throw new Error('You already joined this event');
     }
 
-    // const result = await prisma.$transaction(async (prisma) => {
-    //     const participant = await prisma.participant.create({
-    //         data: {
-    //             userId: user.id,
-    //             eventId,
-    //         },
-    //     });
+    const result = await prisma.$transaction(async (prisma) => {
+        const participant = await prisma.participant.create({
+            data: {
+                userId: user.id,
+                eventId,
+            },
+        });
 
-    //     await prisma.participant.update({
-    //         where: {
-    //             userId: user.id,
-    //             eventId,
-    //         },
-    //         data: {
-    //             // Increment participant count atomically
-    //             // Using raw SQL for atomic increment
-    //             // Alternatively, you can use a separate field to track count
 
-    //             joinedAt: new Date(), // Just to trigger an update
-    //         },
-    //     });
+        await prisma.payment.create({
+            data: {
+                amount: event.joiningFee,
+                userId: user.id,
+                eventId: event.id,
+            },
+        });
+        //         // Increment participant count atomically
+        //         // Using raw SQL for atomic increment
+        //         // Alternatively, you can use a separate field to track count
 
-    //     return participant;
-    // });
-
-    const participant = await prisma.participant.create({
-        data: {
-            userId: user.id,
-            eventId,
-        },
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            mode: 'payment',
+            customer_email: user.email,
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'usd',
+                        product_data: {name: event?.name},
+                        unit_amount: event?.joiningFee * 100,
+                    },
+                    quantity: 1,
+                },
+            ],
+            success_url: `${envVars.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${envVars.CLIENT_URL}/payment-cancel`,
+        });
+        console.log(session, participant);
     });
-
-    return participant;
 };
 
 const getMyHostedEvents = async (user: JwtPayload & {id: string}) => {

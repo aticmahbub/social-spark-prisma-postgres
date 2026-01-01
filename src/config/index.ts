@@ -7,7 +7,7 @@ interface EnvConfig {
     PORT: string;
     DATABASE_URL: string;
     BCRYPTJS_SALT_ROUND: string;
-
+    CLIENT_URL: string;
     CLOUDINARY: {
         CLOUDINARY_CLOUD_NAME: string;
         CLOUDINARY_API_KEY: string;
@@ -19,6 +19,7 @@ interface EnvConfig {
         JWT_REFRESH_SECRET: string;
         JWT_REFRESH_EXPIRES: string;
     };
+    STRIPE: {STRIPE_SECRET_KEY: string};
 }
 
 const loadEnvVariables = (): EnvConfig => {
@@ -34,6 +35,8 @@ const loadEnvVariables = (): EnvConfig => {
         'JWT_ACCESS_EXPIRES',
         'JWT_REFRESH_SECRET',
         'JWT_REFRESH_EXPIRES',
+        'STRIPE_SECRET_KEY',
+        'CLIENT_URL',
     ];
 
     requiredVariables.forEach((key) => {
@@ -49,6 +52,7 @@ const loadEnvVariables = (): EnvConfig => {
         PORT: process.env.PORT as string,
         DATABASE_URL: process.env.DATABASE_URL as string,
         BCRYPTJS_SALT_ROUND: process.env.BCRYPTJS_SALT_ROUND as string,
+        CLIENT_URL: process.env.CLIENT_URL as string,
 
         CLOUDINARY: {
             CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
@@ -61,6 +65,9 @@ const loadEnvVariables = (): EnvConfig => {
             JWT_ACCESS_EXPIRES: process.env.JWT_ACCESS_EXPIRES as string,
             JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET as string,
             JWT_REFRESH_EXPIRES: process.env.JWT_REFRESH_EXPIRES as string,
+        },
+        STRIPE: {
+            STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY as string,
         },
     };
 };
