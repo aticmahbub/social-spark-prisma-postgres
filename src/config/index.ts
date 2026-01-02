@@ -19,7 +19,7 @@ interface EnvConfig {
         JWT_REFRESH_SECRET: string;
         JWT_REFRESH_EXPIRES: string;
     };
-    STRIPE: {STRIPE_SECRET_KEY: string};
+    STRIPE: {STRIPE_SECRET_KEY: string; STRIPE_WEBHOOK_SECRET: string};
 }
 
 const loadEnvVariables = (): EnvConfig => {
@@ -37,6 +37,7 @@ const loadEnvVariables = (): EnvConfig => {
         'JWT_REFRESH_EXPIRES',
         'STRIPE_SECRET_KEY',
         'CLIENT_URL',
+        'STRIPE_WEBHOOK_SECRET',
     ];
 
     requiredVariables.forEach((key) => {
@@ -68,6 +69,7 @@ const loadEnvVariables = (): EnvConfig => {
         },
         STRIPE: {
             STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY as string,
+            STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET as string,
         },
     };
 };

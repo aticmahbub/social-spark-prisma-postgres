@@ -4,10 +4,17 @@ import {envVars} from './config/index.js';
 import cookieParser from 'cookie-parser';
 import notFound from './app/middlewares/notFound.js';
 import {router} from './app/routes/index.js';
+import {PaymentController} from './app/modules/payment/payment.controller.js';
 
 const app: Application = express();
 
 app.use(cors());
+
+app.post(
+    'api/v1/payment/webhook',
+    express.raw({type: 'application/json'}),
+    PaymentController.handleStripeWebhookEvent,
+);
 
 app.use(express.json());
 

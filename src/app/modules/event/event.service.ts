@@ -177,19 +177,22 @@ const joinEvent = async (user: JwtPayload, eventId: string) => {
     }
 
     const result = await prisma.$transaction(async (prisma) => {
-        const participant = await prisma.participant.create({
+        await prisma.participant.create({
             data: {
                 userId: user.id,
                 eventId,
             },
         });
 
+        const uuidSession = uuid();
 
         await prisma.payment.create({
             data: {
                 amount: event.joiningFee,
                 userId: user.id,
                 eventId: event.id,
+                transactionId: uuidSession,
+                status: 'PENDING',
             },
         });
         //         // Increment participant count atomically
@@ -203,18 +206,24 @@ const joinEvent = async (user: JwtPayload, eventId: string) => {
             line_items: [
                 {
                     price_data: {
-                        currency: 'usd',
+                        currency: 'bdt',
                         product_data: {name: event?.name},
                         unit_amount: event?.joiningFee * 100,
                     },
                     quantity: 1,
                 },
             ],
+            metadata: {
+                eventId: event.id,
+                userId: user.id,
+                paymentSessionId: uuidSession,
+            },
             success_url: `${envVars.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${envVars.CLIENT_URL}/payment-cancel`,
         });
-        console.log(session, participant);
+        return {paymentUrl: session.url};
     });
+    return result;
 };
 
 const getMyHostedEvents = async (user: JwtPayload & {id: string}) => {
