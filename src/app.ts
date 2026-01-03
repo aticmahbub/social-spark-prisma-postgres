@@ -11,7 +11,7 @@ const app: Application = express();
 app.use(cors());
 
 app.post(
-    'api/v1/payment/webhook',
+    '/api/v1/payment/webhook',
     express.raw({type: 'application/json'}),
     PaymentController.handleStripeWebhookEvent,
 );

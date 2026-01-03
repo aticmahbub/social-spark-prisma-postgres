@@ -177,7 +177,7 @@ const joinEvent = async (user: JwtPayload, eventId: string) => {
     }
 
     const result = await prisma.$transaction(async (prisma) => {
-        await prisma.participant.create({
+        const participant = await prisma.participant.create({
             data: {
                 userId: user.id,
                 eventId,
@@ -186,7 +186,7 @@ const joinEvent = async (user: JwtPayload, eventId: string) => {
 
         const uuidSession = uuid();
 
-        await prisma.payment.create({
+        const payment = await prisma.payment.create({
             data: {
                 amount: event.joiningFee,
                 userId: user.id,
@@ -206,7 +206,7 @@ const joinEvent = async (user: JwtPayload, eventId: string) => {
             line_items: [
                 {
                     price_data: {
-                        currency: 'bdt',
+                        currency: 'usd',
                         product_data: {name: event?.name},
                         unit_amount: event?.joiningFee * 100,
                     },
@@ -214,8 +214,8 @@ const joinEvent = async (user: JwtPayload, eventId: string) => {
                 },
             ],
             metadata: {
-                eventId: event.id,
-                userId: user.id,
+                participantId: participant.id,
+                paymentId: payment.id,
                 paymentSessionId: uuidSession,
             },
             success_url: `${envVars.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,

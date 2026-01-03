@@ -3,33 +3,30 @@ import {sendResponse} from '../../utils/sendResponse.js';
 import {PaymentService} from './payment.service.js';
 import {stripe} from '../../../lib/stripe.js';
 import {envVars} from '../../../config/index.js';
-import type {Request, Response} from 'express';
+import type {NextFunction, Request, Response} from 'express';
+import type Stripe from 'stripe';
 
-const handleStripeWebhookEvent = catchAsync(
-    async (req: Request, res: Response) => {
-        const sign = req.headers['stripe-signature'] as string;
-        let event;
+const handleStripeWebhookEvent = async (req: Request, res: Response) => {
+    const sig = req.headers['stripe-signature'] as string;
+    const webhookSecret = envVars.STRIPE.STRIPE_WEBHOOK_SECRET;
 
-        try {
-            event = stripe.webhooks.constructEvent(
-                req.body,
-                sign,
-                envVars.STRIPE.STRIPE_WEBHOOK_SECRET,
-            );
-        } catch (err) {
-            console.error('Error verifying webhook signature:', err);
-            return res.status(400).send(`Webhook Error: ${err}`);
-        }
+    let event: Stripe.Event;
 
-        const result = await PaymentService.handleStripeWebhookEvent(event);
+    try {
+        event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+    } catch (error: any) {
+        console.error('Webhook signature failed', error.message);
+        res.status(400).send(`Webhook error ${error.message}`);
+        return;
+    }
 
-        sendResponse(res, {
-            success: true,
-            statusCode: 201,
-            message: 'Webhook event handled successfully',
-            data: result,
-        });
-    },
-);
+    await PaymentService.handleStripeWebhookEvent(event);
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Received',
+        data: {},
+    });
+};
 
 export const PaymentController = {handleStripeWebhookEvent};
