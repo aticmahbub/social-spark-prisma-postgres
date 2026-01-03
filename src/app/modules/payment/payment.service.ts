@@ -10,35 +10,40 @@ const handleStripeWebhookEvent = async (event: Stripe.Event) => {
     console.log('🔔 Stripe webhook received:', event.type);
 
     switch (event.type) {
-        case 'checkout.session.completed':
-            const session = event.data.object;
+        case 'checkout.session.completed': {
+            const session = event.data.object as Stripe.Checkout.Session;
 
-            const participantId = session?.metadata?.participantId;
-            const paymentId = session?.metadata?.paymentId;
-            const transactionId = session?.metadata?.paymentSessionId;
-            const email = session.customer_email;
+            const participantId = session.metadata?.participantId;
+            const paymentId = session.metadata?.paymentId;
 
             if (!participantId || !paymentId) {
                 console.error('Missing metadata', session.metadata);
                 return;
             }
 
-            await prisma.participant.update({
-                where: {id: participantId},
-                data: {
-                    status: UserEventStatus.JOINED,
-                },
-            });
+            await prisma.$transaction([
+                prisma.participant.update({
+                    where: {id: participantId},
+                    data: {status: UserEventStatus.JOINED},
+                }),
+                prisma.payment.update({
+                    where: {id: paymentId},
+                    data: {
+                        status: PaymentStatus.SUCCESS,
+                        transactionId: session.id,
+                        paymentGatewayData: {
+                            amount_total: session.amount_total,
+                            currency: session.currency,
+                            payment_status: session.payment_status,
+                            customer_email: session.customer_email,
+                        },
+                    },
+                }),
+            ]);
 
-            await prisma.payment.update({
-                where: {id: paymentId},
-                data: {
-                    status: PaymentStatus.SUCCESS,
-                    paymentGatewayData: session,
-                },
-            });
-            console.log('payment success');
+            console.log('✅ Payment completed');
             break;
+        }
 
         case 'payment_intent.payment_failed':
             const intent = event.data.object as Stripe.PaymentIntent;

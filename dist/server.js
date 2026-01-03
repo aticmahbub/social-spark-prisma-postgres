@@ -23,7 +23,6 @@ async function bootstrap() {
 }
 (async () => {
     await bootstrap();
-    // await seedSuperAdmin();
 })();
 process.on('unhandledRejection', (reason) => {
     console.log('Unhandled rejection detected. Server shutting down...', reason);
