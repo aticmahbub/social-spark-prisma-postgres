@@ -1,11 +1,17 @@
-node_modules
+# dependencies
+node_modules/
 
+# build output
+dist/
+
+# environment
 .env
 
-/dist
+# prisma generated
+src/generated/
 
-/src/generated
+# uploads
+uploads/
 
-/uploads
-
-/dist
+# logs
+*.log
