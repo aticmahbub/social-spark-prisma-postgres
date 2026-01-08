@@ -11,7 +11,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 
     sendResponse(res, {
         success: true,
-        statusCode: 201,
+        statusCode: 200,
         message: 'User logged in successfully',
         data: result,
     });
@@ -25,10 +25,10 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
 
     sendResponse(res, {
         success: true,
-        statusCode: 201,
-        message: 'User logged in successfully',
-        data: result.accessToken,
+        statusCode: 200,
+        message: 'Set access token successfully',
+        data: null,
     });
 });
 
-export const AuthController = {loginUser};
+export const AuthController = {loginUser, refreshToken};

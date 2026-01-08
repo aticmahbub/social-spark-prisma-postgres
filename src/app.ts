@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import notFound from './app/middlewares/notFound.js';
 import {router} from './app/routes/index.js';
 import {PaymentController} from './app/modules/payment/payment.controller.js';
+import globalErrorHandler from './app/middlewares/globalErrorHandler.js';
 
 const app: Application = express();
 
@@ -54,5 +55,6 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/api/v1', router);
 
 app.use(notFound);
+app.use(globalErrorHandler);
 
 export default app;
