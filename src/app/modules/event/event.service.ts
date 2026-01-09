@@ -8,6 +8,7 @@ import {eventFilterableFields} from './event.constants.js';
 import {v4 as uuid} from 'uuid';
 import {stripe} from '../../../lib/stripe.js';
 import {envVars} from '../../../config/index.js';
+import AppError from '../../errorHelpers/appError.js';
 
 const createEvent = async (user: JwtPayload, data: CreateEventInput) => {
     if (user.role !== Role.HOST) {
@@ -132,6 +133,46 @@ GET /api/events?sortBy=date&sortOrder=asc */
             limit,
             total,
         },
+    };
+};
+
+const getEventById = async (eventId: string) => {
+    const event = await prisma.event.findUnique({
+        where: {id: eventId},
+        include: {
+            host: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    image: true,
+                },
+            },
+            participants: {
+                select: {
+                    id: true,
+                    userId: true,
+                },
+            },
+            _count: {
+                select: {
+                    participants: true,
+                    reviews: true,
+                },
+            },
+        },
+    });
+
+    console.log(event);
+
+    if (!event) {
+        throw new AppError(404, 'Event not found');
+    }
+
+    return {
+        event,
+        // participantCount: event._count.participants,
+        // reviewCount: event._count.reviews,
     };
 };
 
@@ -289,6 +330,7 @@ const updateMyEvent = async (
 export const EventService = {
     createEvent,
     getEvents,
+    getEventById,
     joinEvent,
     getMyHostedEvents,
     updateMyEvent,

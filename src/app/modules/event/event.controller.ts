@@ -38,6 +38,19 @@ const getEvents = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const getEventById = catchAsync(async (req: Request, res: Response) => {
+    const {id} = req.params;
+
+    const result = await EventService.getEventById(id!);
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Event fetched successfully',
+        data: result,
+    });
+});
+
 const joinEvent = catchAsync(async (req: Request, res: Response) => {
     const user = req.user as JwtPayload;
     const eventId = req.body.eventId;
@@ -86,6 +99,7 @@ const updateMyEvent = catchAsync(async (req: Request, res: Response) => {
 export const EventController = {
     createEvent,
     getEvents,
+    getEventById,
     joinEvent,
     getMyHostedEvents,
     updateMyEvent,
