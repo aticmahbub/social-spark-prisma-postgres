@@ -24,4 +24,6 @@ router.patch(
     EventController.updateMyEvent,
 );
 
+router.delete('/:id', checkAuth(Role.HOST), EventController.deleteHostedEvent);
+
 export const EventRoutes: Router = router;

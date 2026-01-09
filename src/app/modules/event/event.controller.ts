@@ -96,6 +96,20 @@ const updateMyEvent = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const deleteHostedEvent = catchAsync(async (req: Request, res: Response) => {
+    const user = req.user;
+    const {id} = req.params;
+
+    const result = await EventService.deleteHostedEvent(user, id as string);
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Event deleted successfully',
+        data: {result},
+    });
+});
+
 export const EventController = {
     createEvent,
     getEvents,
@@ -103,4 +117,5 @@ export const EventController = {
     joinEvent,
     getMyHostedEvents,
     updateMyEvent,
+    deleteHostedEvent,
 };

@@ -327,6 +327,29 @@ const updateMyEvent = async (
     return updatedEvent;
 };
 
+const deleteHostedEvent = async (user: JwtPayload, eventId: string) => {
+    if (user.role !== Role.HOST) {
+        throw new Error('Only hosts can delete events');
+    }
+    const event = await prisma.event.findUnique({
+        where: {id: eventId},
+    });
+    console.log(event);
+    if (!event) {
+        throw new Error('Event not found');
+    }
+
+    if (event.hostId !== user.id) {
+        throw new Error('You are not the owner of this event');
+    }
+
+    await prisma.event.delete({
+        where: {id: eventId},
+    });
+
+    return {id: eventId};
+};
+
 export const EventService = {
     createEvent,
     getEvents,
@@ -334,4 +357,5 @@ export const EventService = {
     joinEvent,
     getMyHostedEvents,
     updateMyEvent,
+    deleteHostedEvent,
 };
