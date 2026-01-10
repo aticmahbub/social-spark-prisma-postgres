@@ -12,14 +12,19 @@ const app: Application = express();
 const allowedOrigins = [
     'http://localhost:3000',
     'https://social-spark-nextjs.vercel.app',
+    /^https:\/\/.*\.vercel\.app$/,
 ];
-
 export const corsConfig = cors({
     origin: (origin, callback) => {
-        // allow requests with no origin (mobile apps, Postman)
         if (!origin) return callback(null, true);
 
-        if (allowedOrigins.includes(origin)) {
+        const isAllowed = allowedOrigins.some((allowed) =>
+            typeof allowed === 'string'
+                ? allowed === origin
+                : allowed.test(origin),
+        );
+
+        if (isAllowed) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
@@ -29,7 +34,6 @@ export const corsConfig = cors({
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 });
-
 app.post(
     '/api/v1/payment/webhook',
     express.raw({type: 'application/json'}),
