@@ -17,7 +17,7 @@ export const setAuthCookie = (res: Response, tokenInfo: AuthTokens) => {
         res.cookie('refreshToken', tokenInfo.refreshToken, {
             httpOnly: true,
             sameSite: 'lax',
-            secure: false,
+            secure: true,
             path: '/',
         });
     }
