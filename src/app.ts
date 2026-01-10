@@ -10,8 +10,8 @@ import globalErrorHandler from './app/middlewares/globalErrorHandler.js';
 const app: Application = express();
 
 const allowedOrigins = [
-    'http://localhost:3000', // Next.js dev
-    // 'https://social-spark.vercel.app', // production frontend
+    'http://localhost:3000',
+    'https://social-spark-nextjs.vercel.app',
 ];
 
 export const corsConfig = cors({

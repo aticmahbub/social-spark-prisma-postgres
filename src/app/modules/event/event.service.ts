@@ -1,6 +1,5 @@
 import type {JwtPayload} from 'jsonwebtoken';
 import {prisma} from '../../../lib/prisma.js';
-import type {CreateEventInput} from './event.types.js';
 import {EventStatus, Role} from '../../../generated/enums.js';
 import {calculatePagination, type IOptions} from '../../utils/pagination.js';
 import type {Prisma} from '../../../generated/client.js';
@@ -277,31 +276,110 @@ const joinEvent = async (user: JwtPayload, eventId: string) => {
     return result;
 };
 
-const getMyHostedEvents = async (user: JwtPayload) => {
+const getMyHostedEvents = async (
+    user: JwtPayload,
+    filters: any,
+    options: IOptions,
+    dateFilters?: {
+        from?: string;
+        to?: string;
+        date?: string;
+    },
+) => {
     if (user.role !== Role.HOST) {
         throw new Error('Only hosts can access hosted events');
     }
 
-    const events = await prisma.event.findMany({
-        where: {
-            hostId: user.id,
+    const {page, limit, skip, sortBy, sortOrder} = calculatePagination(options);
+
+    const {search, ...filterData} = filters;
+
+    const andConditions: Prisma.EventWhereInput[] = [
+        {
+            hostId: user.id, // 🔐 host restriction
         },
+    ];
+
+    // 🔍 Search
+    if (search) {
+        andConditions.push({
+            OR: eventFilterableFields.map((field) => ({
+                [field]: {contains: search, mode: 'insensitive'},
+            })),
+        });
+    }
+
+    // 🎯 Exact filters
+    if (Object.keys(filterData).length > 0) {
+        andConditions.push({
+            AND: Object.keys(filterData).map((key) => ({
+                [key]: {equals: (filterData as any)[key]},
+            })),
+        });
+    }
+
+    // 📅 Date range (from / to)
+    if (dateFilters?.from || dateFilters?.to) {
+        const dateFilter: Prisma.DateTimeFilter = {};
+
+        if (dateFilters.from) {
+            dateFilter.gte = new Date(dateFilters.from);
+        }
+
+        if (dateFilters.to) {
+            dateFilter.lte = new Date(dateFilters.to);
+        }
+
+        andConditions.push({date: dateFilter});
+    }
+
+    // 📆 Specific date
+    if (dateFilters?.date) {
+        const start = new Date(dateFilters.date);
+        const end = new Date(dateFilters.date);
+        end.setHours(23, 59, 59, 999);
+
+        andConditions.push({
+            date: {
+                gte: start,
+                lte: end,
+            },
+        });
+    }
+
+    const whereConditions: Prisma.EventWhereInput = {
+        AND: andConditions,
+    };
+
+    const result = await prisma.event.findMany({
+        skip,
+        take: limit,
+        where: whereConditions,
         orderBy: {
-            createdAt: 'desc',
+            [sortBy]: sortOrder,
         },
         include: {
             participants: {
-                select: {
-                    id: true,
-                },
+                select: {id: true},
             },
         },
     });
 
-    return events.map((event) => ({
-        ...event,
-        participantCount: event.participants.length,
-    }));
+    const total = await prisma.event.count({
+        where: whereConditions,
+    });
+
+    return {
+        data: result.map((event) => ({
+            ...event,
+            participantCount: event.participants.length,
+        })),
+        meta: {
+            page,
+            limit,
+            total,
+        },
+    };
 };
 
 const updateMyEvent = async (

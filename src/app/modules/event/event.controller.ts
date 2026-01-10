@@ -67,13 +67,32 @@ const joinEvent = catchAsync(async (req: Request, res: Response) => {
 const getMyHostedEvents = catchAsync(async (req: Request, res: Response) => {
     const user = req.user as JwtPayload;
 
-    const result = await EventService.getMyHostedEvents(user);
+    const {from, to, date, ...filters} = req.query;
+
+    const options = {
+        page: Number(req.query.page),
+        limit: Number(req.query.limit),
+        sortBy: req.query.sortBy as string,
+        sortOrder: req.query.sortOrder as 'asc' | 'desc',
+    };
+
+    const result = await EventService.getMyHostedEvents(
+        user,
+        filters,
+        options,
+        {
+            from: from as string,
+            to: to as string,
+            date: date as string,
+        },
+    );
 
     sendResponse(res, {
         statusCode: 200,
         success: true,
         message: 'Hosted events fetched successfully',
-        data: result,
+        meta: result.meta,
+        data: result.data,
     });
 });
 
