@@ -17,8 +17,8 @@ export const createEventSchema = z.object({
     joiningFee: z
         .number({error: 'Joining fee must be a number'})
         .nonnegative({message: 'Joining fee cannot be negative'}),
-    status: z.enum(['OPEN', 'CLOSED']).optional(), // defaults to OPEN
-    image: z.string().url().optional(), // optional URL for event image
+    status: z.enum(['OPEN', 'CLOSED']).optional(),
+    image: z.string().url().optional(),
 });
 
 export const EventValidation = {createEventSchema};

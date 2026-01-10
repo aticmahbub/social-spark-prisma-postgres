@@ -9,11 +9,21 @@ import {v4 as uuid} from 'uuid';
 import {stripe} from '../../../lib/stripe.js';
 import {envVars} from '../../../config/index.js';
 import AppError from '../../errorHelpers/appError.js';
+import {fileUploader} from '../../utils/fileUploader.js';
+import type {Request} from 'express';
 
-const createEvent = async (user: JwtPayload, data: CreateEventInput) => {
+const createEvent = async (req: Request) => {
+    const user = req.user;
     if (user.role !== Role.HOST) {
         throw new Error('Only hosts can create events');
     }
+
+    if (req.file) {
+        const uploadResult = await fileUploader.uploadToCloudinary(req.file);
+        req.body.image = uploadResult?.secure_url;
+    }
+
+    const data = req.body;
 
     const event = await prisma.event.create({
         data: {
@@ -267,7 +277,7 @@ const joinEvent = async (user: JwtPayload, eventId: string) => {
     return result;
 };
 
-const getMyHostedEvents = async (user: JwtPayload & {id: string}) => {
+const getMyHostedEvents = async (user: JwtPayload) => {
     if (user.role !== Role.HOST) {
         throw new Error('Only hosts can access hosted events');
     }

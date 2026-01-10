@@ -7,14 +7,13 @@ import pick from '../../utils/pick.js';
 import {eventFilterableFields} from './event.constants.js';
 
 const createEvent = catchAsync(async (req: Request, res: Response) => {
-    const user = req.user;
-    const result = await EventService.createEvent(user, req.body);
+    const event = await EventService.createEvent(req);
 
     sendResponse(res, {
         statusCode: 201,
         success: true,
         message: 'Event created successfully',
-        data: result,
+        data: event,
     });
 });
 
@@ -66,7 +65,7 @@ const joinEvent = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getMyHostedEvents = catchAsync(async (req: Request, res: Response) => {
-    const user = req.user as JwtPayload & {id: string};
+    const user = req.user as JwtPayload;
 
     const result = await EventService.getMyHostedEvents(user);
 
