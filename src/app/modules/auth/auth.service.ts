@@ -5,6 +5,7 @@ import {prisma} from '../../../lib/prisma.js';
 import {generateToken, verifyToken} from '../../utils/jwt.js';
 import {envVars} from '../../../config/index.js';
 import type {JwtPayload, Secret} from 'jsonwebtoken';
+import {Role} from '../../../generated/enums.js';
 
 const loginUser = async (payload: {email: string; password: string}) => {
     const user = await prisma.user.findUniqueOrThrow({
@@ -96,4 +97,20 @@ const refreshToken = async (token: string) => {
 
     return {accessToken};
 };
-export const AuthService = {loginUser, refreshToken};
+
+const getMe = async (user: any) => {
+    const accessToken = user.accessToken;
+    const decodedData = verifyToken(
+        accessToken,
+        envVars.JWT.JWT_ACCESS_SECRET as Secret,
+    );
+
+    const userData = await prisma.user.findUniqueOrThrow({
+        where: {
+            email: decodedData.email,
+        },
+    });
+
+    return userData;
+};
+export const AuthService = {loginUser, refreshToken, getMe};
