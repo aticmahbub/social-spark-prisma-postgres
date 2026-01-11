@@ -4,7 +4,7 @@ import { prisma } from '../../lib/prisma.js';
 import AppError from '../errorHelpers/appError.js';
 export const checkAuth = (...authRoles) => async (req, res, next) => {
     try {
-        const accessToken = req.headers.authorization || req.cookies.accessToken;
+        const accessToken = req.cookies.accessToken || req.headers.authorization;
         if (!accessToken) {
             throw new AppError(401, 'No Token received');
         }

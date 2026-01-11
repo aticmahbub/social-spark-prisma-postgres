@@ -64,8 +64,8 @@ export declare const UserService: {
             status: import("../../../generated/enums.js").UserEventStatus;
             id: string;
             eventId: string;
-            joinedAt: Date;
             userId: string;
+            joinedAt: Date;
         }[];
     }>;
     updateProfile: (req: Request, user: JwtPayload & {

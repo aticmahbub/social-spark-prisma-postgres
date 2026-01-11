@@ -98,12 +98,12 @@ const refreshToken = async (token: string) => {
     return {accessToken};
 };
 
-const getMe = async (user: any) => {
+const getMe = async (user: JwtPayload) => {
     const accessToken = user.accessToken;
     const decodedData = verifyToken(
         accessToken,
         envVars.JWT.JWT_ACCESS_SECRET as Secret,
-    );
+    ) as JwtPayload;
 
     const userData = await prisma.user.findUniqueOrThrow({
         where: {
