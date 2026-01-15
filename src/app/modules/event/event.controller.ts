@@ -5,6 +5,7 @@ import {EventService} from './event.service.js';
 import type {JwtPayload} from 'jsonwebtoken';
 import pick from '../../utils/pick.js';
 import {eventFilterableFields} from './event.constants.js';
+import {fileUploader} from '../../utils/fileUploader.js';
 
 const createEvent = catchAsync(async (req: Request, res: Response) => {
     const event = await EventService.createEvent(req);
@@ -99,6 +100,12 @@ const getMyHostedEvents = catchAsync(async (req: Request, res: Response) => {
 const updateMyEvent = catchAsync(async (req: Request, res: Response) => {
     const user = req.user as JwtPayload & {id: string};
     const {eventId} = req.params;
+
+    // Handle file upload if present
+    if (req.file) {
+        const uploadResult = await fileUploader.uploadToCloudinary(req.file);
+        req.body.image = uploadResult?.secure_url;
+    }
 
     const result = await EventService.updateMyEvent(
         user,

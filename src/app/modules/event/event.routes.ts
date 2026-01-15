@@ -24,14 +24,21 @@ router.post('/join', checkAuth(Role.USER), EventController.joinEvent);
 router.get(
     '/my-events',
     checkAuth(Role.HOST, Role.USER),
-
     EventController.getMyHostedEvents,
 );
 
+// ADD FILE UPLOAD MIDDLEWARE HERE
 router.patch(
     '/my-events/:eventId',
     checkAuth(Role.HOST),
-    EventController.updateMyEvent,
+    fileUploader.upload.single('file'), // Added this line
+    (req: Request, res: Response, next: NextFunction) => {
+        // Parse data field if it exists
+        if (req.body.data) {
+            req.body = JSON.parse(req.body.data);
+        }
+        return EventController.updateMyEvent(req, res, next);
+    },
 );
 
 router.get('/:id', EventController.getEventById);

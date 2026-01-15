@@ -24,6 +24,11 @@ const createEvent = async (req: Request) => {
 
     const data = req.body;
 
+    // Convert date string to Date object for Prisma
+    if (data.date && typeof data.date === 'string') {
+        data.date = new Date(data.date);
+    }
+
     const event = await prisma.event.create({
         data: {
             ...data,
@@ -404,8 +409,12 @@ const updateMyEvent = async (
     }
 
     const forbiddenFields = ['hostId', 'createdAt', 'updatedAt'];
-
     forbiddenFields.forEach((field) => delete (payload as any)[field]);
+
+    // Convert date string to Date object for Prisma
+    if (payload.date && typeof payload.date === 'string') {
+        payload.date = new Date(payload.date as string);
+    }
 
     const updatedEvent = await prisma.event.update({
         where: {id: eventId},
